@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Probando VUE</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+
+<body>
+    <div id="appVS">
+        <div class="container">
+            <h3 class="text-center">SISTEMA DE OFERTAS POR LLAMADA TELEFONICO</h3>
+            <hr>
+            <div class="row">
+                <div class="col-sm-3 col-md-2 form-group">
+                    <h2>
+                        <spam class="label label-danger">
+                            Clientes :
+                        </spam>
+                    </h2>
+                    <select name="cantidad" class="form-control input-sm" v-model="cantidad">
+                                <option value="5">Cinco</option>
+                                <option value="10">Diez</option>
+                                <option value="15">Quince</option>
+                                <option value="20">Veinte</option>
+                            </select>
+                    <button v-on:click="obtenerClientes" class="btn btn-danger btn-sm"> Obtener </button>
+                </div>
+                <div class="col-sm-4 col-md-4  col-sm-offset-1 col-md-offset-1">
+                    <h2>
+                        <spam class="label label-primary">Informacion a mostrar:</spam>
+                    </h2>
+
+                    <input type="checkbox" v-model="mostrarTitle">Titulo
+                    <input type="checkbox" v-model="mostrarGender">Genero
+                    <input type="checkbox" v-model="mostrarNameFirst">Nombres<br>
+                    <input type="checkbox" v-model="mostrarNameLast">Apellidos
+                    <input type="checkbox" v-model="mostrarEmail">Correo Electronico
+                    <input type="checkbox" v-model="mostrarCity">Ciudad
+
+                </div>
+                <div class="col-sm-3 col-md-3  col-sm-offset-1 col-md-offset-1">
+                    <h2>
+                        <spam class="label label-danger">
+                            Filtrar por nombre :
+                        </spam>
+                    </h2>
+                    <input type="text" class="form-control input-sm" v-model.lazy.trim="textoBusqueda">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-5 col-md-4" v-for="(persona,index) in personas" v-show="aplicarFiltro(persona.name.first+persona.name.last)">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+
+                        </div>
+                        <div class="panel-body">
+                            <table border="0">
+                                <tr>
+                                    <td><img v-bind:src="persona.picture.large" class=""></td>
+                                    <td>
+                                        Nombre:
+                                        <spam v-text="persona.name.title" v-show="mostrarTitle" class=""> </spam>
+                                        <spam v-text="persona.name.first" v-show="mostrarNameFirst" class=""> </spam>
+                                        <spam v-text="persona.name.last" v-show="mostrarNameLast" class=""></spam>
+                                        <br v-show="mostrarGender">
+                                        <spam v-text="'Sexo: ' + persona.gender" v-show="mostrarGender"></spam>
+                                        <br v-show="mostrarCity">
+                                        <spam v-text="'Ciudad: ' + persona.location.city" v-show="mostrarCity" class=""></spam>
+                                        <br v-show="mostrarEmail">
+                                        <spam v-text="'Email: ' + persona.email" v-show="mostrarEmail" class=""></spam>
+                                        <br>
+                                        <strong v-text="'Telefono: ' + persona.phone" class=""></strong><br>
+                                        <strong v-text="'Celular: ' + persona.phone" class=""></strong>
+
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="panel-footer text-center">
+                            <button class="btn btn-primary" v-on:click="aceptar(index)">Aceptado</button>
+                            <button class="btn btn-default" v-on:click="rechazar(index)">Rechazado</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br><br><br>
+        <div class="navbar navbar-inverse navbar-fixed-bottom text-center container">
+            <h3>
+                <spam class="label">Total de Aceptados: </spam>
+                <spam class="label label-primary">{{totalAceptados}}</spam>
+                <spam class="label"> Total de Rechazados: </spam>
+                <spam class="label label-primary">{{totalRechazados}}</spam>
+            </h3>
+        </div>
+
+        <!--
+        <pre class="container">{{ $data }}</pre>
+        -->
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        new Vue({
+            el: "#appVS",
+
+            data: {
+                cantidad: 5,
+                personas: [],
+                mostrarTitle: true,
+                mostrarGender: false,
+                mostrarNameFirst: true,
+                mostrarNameLast: true,
+                mostrarEmail: false,
+                mostrarCity: true,
+                totalAceptados: 0,
+                totalRechazados: 0,
+                textoBusqueda: "",
+            },
+            methods: {
+                obtenerClientes: function() {
+                    //alert(this.cantidad);
+                    axios
+                        .get('https://randomuser.me/api/?results=' + this.cantidad)
+                        .then(response => {
+                            this.personas = response.data.results;
+                            //console.log(response);
+                        })
+                },
+                aceptar: function(index) {
+                    this.totalAceptados++;
+                    this.personas.splice(index, 1);
+                    //alert(index);
+                },
+                rechazar: function(index) {
+                    this.totalRechazados++;
+                    this.personas.splice(index, 1);
+                    //alert(index);
+                },
+                aplicarFiltro: function(cadena) {
+                    if (!cadena) {
+                        return true;
+                    }
+                    if (cadena.indexOf(this.textoBusqueda) >= 0) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+
+                }
+            },
+
+
+        })
+    </script>
+</body>
+
+</html>
