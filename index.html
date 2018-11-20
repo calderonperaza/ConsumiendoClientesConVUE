@@ -28,6 +28,7 @@
                                 <option value="20">Veinte</option>
                             </select>
                     <button v-on:click="obtenerClientes" class="btn btn-danger btn-sm"> Obtener </button>
+                    <h4>{{mensajeApi}}</h4>
                 </div>
                 <div class="col-sm-4 col-md-4  col-sm-offset-1 col-md-offset-1">
                     <h2>
@@ -126,16 +127,25 @@
                 totalAceptados: 0,
                 totalRechazados: 0,
                 textoBusqueda: "",
+                mensajeApi: "",
             },
             methods: {
                 obtenerClientes: function() {
                     //alert(this.cantidad);
+                    this.mensajeApi="Obteniendo datos...";
                     axios
                         .get('https://randomuser.me/api/?results=' + this.cantidad)
                         .then(response => {
                             this.personas = response.data.results;
                             //console.log(response);
                         })
+                    if(this.personas.length===0){
+                        this.mensajeApi="Error al cargar datos";
+                    }else{
+                        this.mensajeApi="";
+                    }
+                        
+                    
                 },
                 aceptar: function(index) {
                     this.totalAceptados++;
