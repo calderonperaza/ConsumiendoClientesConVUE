@@ -54,7 +54,7 @@
             </div>
 
             <div class="row">
-                <div class="col-sm-5 col-md-4" v-for="(persona,index) in personas" v-show="aplicarFiltro(persona.name.first+persona.name.last)">
+                <div class="col-sm-5 col-md-4" v-bind:name="index" v-for="(persona,index) in personas" v-show="aplicarFiltro(persona.name.first+persona.name.last)">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
 
