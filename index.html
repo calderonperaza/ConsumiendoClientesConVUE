@@ -53,7 +53,7 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row"><input type="hidden" id="totalpersonas" v-bind:name="personas.length">
                 <div class="col-sm-5 col-md-4" v-bind:name="'conta-'+index" v-for="(persona,index) in personas" v-show="aplicarFiltro(persona.name.first+persona.name.last)">
                     
                     <div class="panel panel-primary">
